@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./layout/global";
+@import "./layout/_sidebar";
+@import "./layout/_topbar";
+@import "./layout/user";
+@import "./layout/search";

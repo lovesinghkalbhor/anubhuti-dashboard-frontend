@@ -1,0 +1,61 @@
+table {
+  @apply min-w-full border-collapse border border-gray-200;
+
+  thead {
+    tr {
+      @apply bg-gray-100 text-left text-gray-600 uppercase text-xs;
+    }
+
+    th {
+      @apply py-3 px-4 border border-gray-100;
+    }
+  }
+
+  tbody {
+    @apply px-8;
+    tr {
+      @apply hover:bg-gray-100;
+    }
+    td {
+      @apply py-3 px-4 border border-x-0 border-gray-200 text-xs;
+    }
+  }
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea {
+  @apply placeholder:text-xs  border-solid border-gray-300 border-2 px-3 pt-[0.1rem] pb-1 rounded-md;
+  &:focus {
+    @apply outline-gray-500;
+  }
+}
+form {
+  label {
+    @apply font-semibold text-xs;
+  }
+  hr {
+    @apply mt-8 mb-7 border-black opacity-40;
+  }
+}
+
+.main-page_container {
+  @apply shadow-mainShadow rounded-xl py-10 px-8;
+}
+.controller {
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(191, 191, 191);
+    border-radius: 10px;
+  }
+}
+
+.normal-button-bg-secondary {
+  @apply text-white text-sm bg-secondaryColor px-6 py-2;
+  @apply rounded-md cursor-pointer hover:bg-secondaryColor-hover;
+  @apply active:scale-95 transition-all duration-300;
+}

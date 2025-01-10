@@ -1,0 +1,12 @@
+.search_container {
+  @apply flex flex-wrap w-full justify-between items-center;
+  @apply mt-10 mb-16;
+
+  .search_container-input {
+    @apply flex justify-between w-4/5;
+
+    input[type="text"] {
+      @apply w-full;
+    }
+  }
+}

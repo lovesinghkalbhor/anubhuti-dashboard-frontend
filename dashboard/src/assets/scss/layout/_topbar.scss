@@ -1,0 +1,7 @@
+.topbar-wrapper {
+  @apply font-bold flex justify-between mb-8 mt-4;
+
+  h2 {
+    @apply font-semibold  text-xl;
+  }
+}

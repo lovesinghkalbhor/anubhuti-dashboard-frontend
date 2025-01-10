@@ -1,0 +1,21 @@
+.user-page_container {
+  h1 {
+    @apply font-normal text-2xl;
+  }
+  hr {
+    @apply mt-8 mb-7 border-black opacity-40;
+  }
+
+  form {
+    @apply lg:w-6/12;
+    @apply space-y-5;
+    @apply ms-2;
+    .user-page_container-input {
+      @apply flex justify-between;
+
+      label {
+        @apply font-semibold text-xs;
+      }
+    }
+  }
+}

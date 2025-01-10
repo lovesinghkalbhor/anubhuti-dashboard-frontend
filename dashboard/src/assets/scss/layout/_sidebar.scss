@@ -1,0 +1,25 @@
+.sidebar-wrapper {
+  @apply w-64 bg-primaryColor rounded-2xl shadow-2xl py-5 px-3;
+
+  h1 {
+    @apply text-center text-white font-bold tracking-widest text-lg;
+  }
+  .sidebar-wrapper_links_container {
+    @apply space-y-5 my-8 mx-3;
+
+    .sidebar-wrapper_link {
+      @apply flex space-x-5 items-center;
+
+      h6 {
+        @apply text-white opacity-85;
+        @apply transition-all duration-300;
+      }
+
+      &:hover {
+        h6 {
+          @apply opacity-100 font-bold;
+        }
+      }
+    }
+  }
+}
