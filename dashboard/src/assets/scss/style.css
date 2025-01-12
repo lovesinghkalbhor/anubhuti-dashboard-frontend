@@ -61,10 +61,10 @@ form hr {
 }
 
 .sidebar-wrapper {
-  @apply w-64 bg-primaryColor rounded-2xl shadow-2xl py-5 px-3;
+  @apply w-fit bg-primaryColor rounded-2xl shadow-2xl py-5 px-3 relative transition-all duration-500;
 }
 .sidebar-wrapper h1 {
-  @apply text-center text-white font-bold tracking-widest text-lg;
+  @apply text-right text-white font-bold tracking-widest text-lg ml-4;
 }
 .sidebar-wrapper .sidebar-wrapper_links_container {
   @apply space-y-5 my-8 mx-3;
@@ -106,11 +106,11 @@ form hr {
 }
 
 .search_container {
-  @apply flex flex-wrap w-full justify-between items-center;
+  @apply lg:flex   flex-wrap w-full justify-between items-center;
   @apply mt-10 mb-16;
 }
 .search_container .search_container-input {
-  @apply flex justify-between w-4/5;
+  @apply flex lg:mb-0 mb-6 justify-between w-4/5 lg:gap-0 gap-11;
 }
 .search_container .search_container-input input[type=text] {
   @apply w-full;

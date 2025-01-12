@@ -1,12 +1,11 @@
-import { useState } from "react";
-import AddDonationForm from "./donationForm";
+// import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../reduxState/store";
 
 function Cards() {
   const user = useSelector((state: RootState) => state.user);
 
-  const [showForm, setshowForm] = useState(false);
+  // const [showForm, setshowForm] = useState(false);
   return (
     <>
       <div className="grid grid-cols-12 lg:h-56 h-fit gap-5">
@@ -32,10 +31,7 @@ function Cards() {
                   <span>&#8377;</span> 532.34
                 </h2>
               </div>
-              <button
-                className="normal-button-bg-secondary"
-                onClick={() => setshowForm(true)}
-              >
+              <button className="normal-button-bg-secondary">
                 New Donation
               </button>
             </div>

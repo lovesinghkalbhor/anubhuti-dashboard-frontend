@@ -4,12 +4,32 @@ import Topbar from "../components/topbar";
 import MainpageRoutes from "./routeComponents/MainpageRoutes";
 import SideBar from "../components/sidebar";
 import LoginsignupRoutes from "./routeComponents/LoginsignupRoutes";
-import { useLocation, useNavigate } from "react-router";
 import { ToastContainer } from "react-toastify";
-import notify from "../components/notify";
 import "react-toastify/dist/ReactToastify.css";
-import { isTokenValid } from "../dataFetching/userApi/user.api";
+import { getUserByIdApi } from "../dataFetching/userApi/user.api";
+import { setUser } from "../reduxState/Features/storeuser/userSlice";
+import { useDispatch } from "react-redux";
+import ErrorBoundary from "../components/errorBoundary";
+import { ErrorForMainPage } from "../components/errorFallback";
+
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getUserByIdApi();
+      dispatch(
+        setUser({
+          name: user?.apiResponse.data.name,
+          email: user?.apiResponse.data.email,
+          mobile: user?.apiResponse.data.mobile,
+          adhar_card: user?.apiResponse.data.adhar_card,
+        })
+      );
+    };
+    getUser();
+  }, []);
+
   return (
     <>
       <div
@@ -32,7 +52,9 @@ function App() {
               <Topbar></Topbar>
             </div>
             <div className="  w-full h-[90%]  mb-16 mt-20">
-              <MainpageRoutes></MainpageRoutes>
+              <ErrorBoundary fallback={<ErrorForMainPage />}>
+                <MainpageRoutes></MainpageRoutes>
+              </ErrorBoundary>
             </div>
           </main>
         </div>

@@ -1,26 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-
+import { MdOutlineCancel } from "react-icons/md";
+import { validateSearchText, validateDate } from "../utils/helperFuntions";
+import notify from "./notify";
 interface SearchSectionProps {
   onSearch: (searchText: string, startDate: string, endDate: string) => void;
+  refresh: (message: string | undefined) => Promise<void>;
 }
 
-const SearchSection: React.FC<SearchSectionProps> = ({ onSearch }) => {
+const SearchSection: React.FC<SearchSectionProps> = ({ onSearch, refresh }) => {
   const [searchText, setSearchText] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [showDateDropdown, setShowDateDropdown] = useState(false);
 
   const handleSearch = () => {
+    if (
+      !validateSearchText(searchText) &&
+      (!validateDate(startDate) || !validateDate(endDate))
+    ) {
+      notify(
+        "Start, endDate and Search text should not be empty and must be alphanumeric (A-Z, a-z, 0-9)",
+        false
+      );
+      return;
+    }
+
     onSearch(searchText, startDate, endDate);
   };
+  const dropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDateDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="search_container">
       {/* Search Input */}
 
       <div className="search_container-input">
-        <div className="lg:w-3/4  w-full">
+        <div className="lg:w-3/4   w-full flex items-center space-x-5">
           <input
             type="text"
             placeholder="Search"
@@ -34,20 +67,31 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onSearch }) => {
             }}
             className="text_search-input"
           />
+          <button
+            className=""
+            onClick={() => {
+              refresh("Clear the search result successfuly");
+              setSearchText("");
+              setEndDate("");
+              setStartDate("");
+            }}
+          >
+            <MdOutlineCancel size={20} />
+          </button>
         </div>
 
         {/* Search By Date Dropdown */}
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }} ref={dropdownRef}>
           <button
             onClick={() => {
               setShowDateDropdown(!showDateDropdown);
               setSearchText("");
             }}
-            className="cursor-pointer text-sm flex content-center"
+            className="active:scale-95 transition-all text-nowrap duration-300 cursor-pointer text-xs flex content-center border-2 border-opacity-30  rounded-full px-4 py-1  border-black"
           >
             <span> Search by date</span>
             <span>
-              <IoMdArrowDropdown />
+              <IoMdArrowDropdown size={18} />
             </span>
           </button>
 

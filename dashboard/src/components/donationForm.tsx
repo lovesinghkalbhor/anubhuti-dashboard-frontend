@@ -30,6 +30,35 @@ const AddDonationForm: React.FC = () => {
     setItems(updatedItems);
   };
 
+  // Filter and validate items
+  const filteredItems = (items: any[]) => {
+    let isInvalidItems = false;
+    const itemsArray = items.filter((item) => {
+      const isNameEmpty = !item.name || item.name.trim() === "";
+      const isQuantityEmpty = !item.quantity || item.quantity.trim() === "";
+
+      // If one of the fields is empty, show notification and exit
+      if (isNameEmpty !== isQuantityEmpty) {
+        notify("Both item name and quantity must be filled.", false);
+        isInvalidItems = true;
+        return true; // This ensures we skip processing further
+      } else if (isNameEmpty == true && isQuantityEmpty == true) {
+        return false; // This ensures we skip processing further
+      } else {
+        return true; // This ensures we skip processing further
+      }
+    });
+
+    // setting the items after filtering
+    setItems(itemsArray);
+
+    if (isInvalidItems) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const handleSubmit = async (
     values: typeof initialValues,
     { setSubmitting, resetForm, setFieldError }: any
@@ -46,6 +75,12 @@ const AddDonationForm: React.FC = () => {
       setFieldError("amount", "Either Amount or Items is required.");
       return;
     }
+
+    // if items array is invalid then return from the function and do not submit
+    if (filteredItems(items)) {
+      return;
+    }
+
     const ItemAdded = { ...values, items: items };
     try {
       const CustomApiResponse = await notify(
@@ -58,11 +93,9 @@ const AddDonationForm: React.FC = () => {
       if (apiData.data) {
         notify(apiData.message, apiData.success);
         resetForm();
+        setItems([]);
       }
     } catch (error: any) {
-      // if the error is less then 500 and
-      // grater than equal to 400 means something wrong from the user side
-      //  then set the error field else show the error
       notify(error.apiResponse.data.message, false);
     } finally {
       setSubmitting(false);
@@ -208,10 +241,7 @@ const AddDonationForm: React.FC = () => {
               </div>
               <div className=" border-2 border-black border-opacity-20 rounded-xl p-3 h-full  overflow-auto ">
                 {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-start mb-2 gap-2"
-                  >
+                  <div key={index} className="flex flex-col items-start  gap-2">
                     <input
                       type="text"
                       name="name"
@@ -220,6 +250,7 @@ const AddDonationForm: React.FC = () => {
                       onChange={(e) => handleItemChange(index, e)}
                       className=" w-full"
                     />
+
                     <input
                       type="text"
                       name="quantity"
@@ -228,6 +259,11 @@ const AddDonationForm: React.FC = () => {
                       onChange={(e) => handleItemChange(index, e)}
                       className="w-full"
                     />
+                    {!item.name.trim() || !item.quantity.trim() ? (
+                      <h6 className="text-red-600 text-xs font-bold">
+                        Both item name and quantity must be filled{" "}
+                      </h6>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => handleDeleteItem(index)}
@@ -236,7 +272,7 @@ const AddDonationForm: React.FC = () => {
                       Delete Item
                     </button>
 
-                    <hr className="mt-6" />
+                    <hr className="mt-4 w-full border-black border-1 border-opacity-40" />
                   </div>
                 ))}
               </div>

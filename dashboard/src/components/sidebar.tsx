@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { RiDashboardFill } from "react-icons/ri";
 import { BiSolidDonateHeart } from "react-icons/bi";
 import { BiSolidUserPin } from "react-icons/bi";
@@ -6,8 +7,37 @@ import { Link, useLocation } from "react-router";
 import { useNavigate } from "react-router";
 import { LogoutApi } from "../dataFetching/userApi/user.api";
 import notify from "./notify";
+import { GiHamburgerMenu } from "react-icons/gi";
+
 function SideBar() {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to control sidebar visibility
+  // const [screenWidth, setScreenWidth] = useState(window.innerWidth); // Initial screen width
+
+  useEffect(() => {
+    // Function to handle screen resize
+    const handleResize = () => {
+      // setScreenWidth(window.innerWidth); // Update the screen width state
+      if (window.innerWidth <= 1024) {
+        setIsSidebarOpen(false); // Close sidebar for small screens
+      } else {
+        setIsSidebarOpen(true); // Open sidebar for large screens
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Call handler once on mount to set initial state
+    handleResize();
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty dependency array ensures this runs only once
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar visibility
+  };
 
   const location = useLocation(); // To get the current active route
   const handleLogout = async () => {
@@ -50,16 +80,20 @@ function SideBar() {
       icon: <BiSolidUserPin size={20} color="white" />,
       label: "User",
     },
-    // {
-    //   to: "/register",
-    //   icon: <BiSolidUserPin size={20} color="white" />,
-    //   label: "Register",
-    // },
   ];
+
   return (
     <>
       <div className="sidebar-wrapper">
-        <h1>ANUBHUTI</h1>
+        <div className="flex mx-5 mt-3">
+          <button
+            onClick={handleToggleSidebar}
+            className="invert  top-6 left-2 rounded-full "
+          >
+            <GiHamburgerMenu size={20} />
+          </button>
+          {isSidebarOpen ? <h1>ANUBHUTI</h1> : null}
+        </div>
 
         <div className="sidebar-wrapper_links_container">
           {links.map((link) => (
@@ -75,7 +109,7 @@ function SideBar() {
               >
                 {link.icon}
               </div>
-              <h6>{link.label}</h6>
+              {isSidebarOpen ? <h6>{link.label}</h6> : null}
             </Link>
           ))}
           <button
@@ -98,36 +132,8 @@ function SideBar() {
               />{" "}
             </div>
 
-            <h6>Logout</h6>
+            {isSidebarOpen ? <h6>Logout</h6> : null}
           </button>
-          {/* <Link to={"/donation"} className="sidebar-wrapper_link">
-            <BiSolidDonateHeart
-              color="white"
-              size={20}
-              className="sidebar-wrapper_link_icon"
-            />
-            <h6>Dontions</h6>
-          </Link>
-          <Link to={"/user"} className="sidebar-wrapper_link">
-            <BiSolidUserPin
-              color="white"
-              size={20}
-              className="sidebar-wrapper_link_icon"
-            />
-            <h6>User</h6>
-          </Link>
-          <Link
-            to={"/logout"}
-            className="sidebar-wrapper_link"
-            data-logout="logout"
-          >
-            <IoLogOut
-              color="white"
-              size={20}
-              className="sidebar-wrapper_link_icon"
-            />
-            <h6>Logout</h6>
-          </Link> */}
         </div>
       </div>
     </>

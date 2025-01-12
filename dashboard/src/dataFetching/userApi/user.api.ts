@@ -220,6 +220,24 @@ const changePasswordApi = async (oldPassword: string, newPassword: string) => {
   }
 };
 
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+const getUserByIdApi = async () => {
+  try {
+    // Send the request to change the password using the Axios instance
+    const response = await api.get("/users/userById");
+
+    // Create the custom response for frontend
+    const returnValue = new CustomApiResponse(response.data, null, true);
+
+    return returnValue;
+  } catch (error: any) {
+    handleApiError(error);
+  }
+};
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
@@ -246,4 +264,5 @@ export {
   refreshTokenApi,
   changePasswordApi,
   UpdateUserApi,
+  getUserByIdApi,
 };

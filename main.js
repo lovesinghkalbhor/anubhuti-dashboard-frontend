@@ -7,6 +7,7 @@ require('dotenv').config();
 const SERVICE_NAME = "AnubhutiSevaSansthanApp";
 const ACCOUNT_NAME = "accessToken";
 
+
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 1200,
@@ -23,9 +24,14 @@ const createWindow = () => {
         }
     });
 
-    win.webContents.openDevTools();
-    win.loadURL("http://localhost:5173");
-    console.log(path.join(__dirname, 'preload.js'));
+    // Load the React app from the correct path
+    const appPath = app.getAppPath();
+    win.loadFile(path.join(appPath, 'dashboard', 'dist', 'index.html'));
+    // Uncomment for development
+    // if (process.env.NODE_ENV === 'development') {
+    //     win.webContents.openDevTools();
+    // }
+
 };
 
 // Setup IPC handlers for secure storage

@@ -22,7 +22,7 @@ const Donations: React.FC = () => {
   const [filteredData, setFilteredData] = useState<Donation[]>([]);
 
   const [page, setpage] = useState(1);
-  const [limit, setlimit] = useState(10);
+  const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1); // Dynamically updated based on API response
   const [totalItems, setTotalItems] = useState(0); // Dynamically updated based on API response
   const [currentPage, setCurrentPage] = useState(1); // Dynamically updated based on API response
@@ -34,7 +34,11 @@ const Donations: React.FC = () => {
   ) => {
     try {
       if (searchText.length) {
-        const CustomApiResponse = await searchDonationByDetailsApi(searchText);
+        const CustomApiResponse = await notify(
+          "",
+          false,
+          searchDonationByDetailsApi(searchText)
+        );
         const apiData = CustomApiResponse?.apiResponse;
         console.log(apiData.data.donations, "apiData");
 
@@ -85,7 +89,9 @@ const Donations: React.FC = () => {
     //
     //   setFilteredData(filtered);
   };
-  const handleSubmit = async () => {
+
+  // it fatches the all the list without fileter
+  const fetchDefaultList = async (message: string | undefined = undefined) => {
     try {
       const CustomApiResponse = await notify(
         "",
@@ -102,10 +108,9 @@ const Donations: React.FC = () => {
 
         setTotalPages(Math.ceil(apiData.data?.pagination.totalPages)); // Assuming API provides `total` items count
         setTotalItems(Math.ceil(apiData.data?.pagination.totalItems)); // Assuming API provides `total` items count
-
         setCurrentPage(Math.ceil(apiData.data?.pagination.currentPage)); // Assuming API provides `total` items count
         // if  donation retrive successfully notify
-        notify(apiData.message, apiData.success);
+        notify(message || apiData.message, apiData.success);
       }
     } catch (error: any) {
       notify(error.apiResponse?.data.message, false);
@@ -124,12 +129,15 @@ const Donations: React.FC = () => {
     }
   };
   useEffect(() => {
-    handleSubmit();
+    fetchDefaultList();
   }, [page]);
 
   return (
     <>
-      <SearchSection onSearch={handleSearch}></SearchSection>
+      <SearchSection
+        onSearch={handleSearch}
+        refresh={fetchDefaultList}
+      ></SearchSection>
       <div className="overflow-x-hidden mt-10 p-0 main-page_container shadow-mainShadow ">
         <div className="overflow-x-auto">
           <table>

@@ -5,14 +5,63 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build:react": "cd dashboard && npm run build",
+    "build:electron": "electron-builder",
+    "build": "npm run build:react && npm run build:electron",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.anubhuti.id",
+    "productName": "Anubhuti vision seva sansthan",
+    "files": [
+      "main.js",
+      "preload.js",
+      "dashboard/dist/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.business"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Office"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
-    "electron": "^33.0.2",
     "electron-download": "^4.1.1",
     "keytar": "^7.9.0"
+  },
+  "devDependencies": {
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "electron-packager": "^17.1.2"
   }
 }

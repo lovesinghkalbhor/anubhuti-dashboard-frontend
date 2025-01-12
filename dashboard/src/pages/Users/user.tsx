@@ -40,7 +40,7 @@ const User: React.FC = () => {
   ) => {
     try {
       console.log(values, "value from the user");
-      const CustomApiResponse = await UpdateUserApi(values);
+      const CustomApiResponse = await notify("", false, UpdateUserApi(values));
 
       const apiData = CustomApiResponse?.apiResponse;
 
@@ -85,9 +85,10 @@ const User: React.FC = () => {
     { setSubmitting, setFieldError }: any
   ) => {
     try {
-      const CustomApiResponse = await changePasswordApi(
-        values.oldPassword,
-        values.newPassword
+      const CustomApiResponse = await notify(
+        "",
+        false,
+        changePasswordApi(values.oldPassword, values.newPassword)
       );
 
       const apiData = CustomApiResponse?.apiResponse;
@@ -239,7 +240,7 @@ const User: React.FC = () => {
                 <label>Confirm Password</label>
                 <div>
                   <Field
-                    type="password"
+                    type="text"
                     name="confirmPassword"
                     placeholder="Confirm Password"
                   />
