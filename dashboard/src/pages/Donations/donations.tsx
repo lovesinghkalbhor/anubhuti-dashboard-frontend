@@ -1,94 +1,33 @@
 import React, { useState, useEffect } from "react";
 import SearchSection from "../../components/search";
 import notify from "../../components/notify";
+import { PaginationState, DonationListInterface } from "../../utils/types";
 import {
+  filterDonations,
   getDonationByIdApi,
   getDonationListApi,
   searchDonationByDetailsApi,
   searchDonationsByDateApi,
 } from "../../dataFetching/donationApi/donation.api";
 import { formatDate } from "../../utils/helperFuntions";
-interface Donation {
-  receiptNo: number;
-  date: string;
-  authorizedPersonName: string;
-  donorName: string;
-  phoneNumber: string;
-  amount: number;
-  _count: any;
-}
 
 const Donations: React.FC = () => {
-  const [filteredData, setFilteredData] = useState<Donation[]>([]);
+  const [filteredData, setFilteredData] = useState<DonationListInterface[]>([]);
+  const [recentFilters, setRecentFilters] = useState({
+    donationCategory: { change: false, submit: false },
+    paymentMethod: { change: false, submit: false },
+    searchText: { change: false, submit: false },
+    startDate: { change: false, submit: false },
+    endDate: { change: false, submit: false },
+  });
 
-  const [page, setpage] = useState(1);
-  const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1); // Dynamically updated based on API response
-  const [totalItems, setTotalItems] = useState(0); // Dynamically updated based on API response
-  const [currentPage, setCurrentPage] = useState(1); // Dynamically updated based on API response
-
-  const handleSearch = async (
-    searchText: string,
-    startDate: string,
-    endDate: string
-  ) => {
-    try {
-      if (searchText.length) {
-        const CustomApiResponse = await notify(
-          "",
-          false,
-          searchDonationByDetailsApi(searchText)
-        );
-        const apiData = CustomApiResponse?.apiResponse;
-        console.log(apiData.data.donations, "apiData");
-
-        if (apiData.data) {
-          // console.log(apiData.data.donation, "data from the api");
-          setFilteredData(apiData?.data?.donations);
-
-          setTotalPages(Math.ceil(apiData.data?.pagination.totalPages)); // Assuming API provides `total` items count
-          setTotalItems(Math.ceil(apiData.data?.pagination.totalItems)); // Assuming API provides `total` items count
-          setCurrentPage(Math.ceil(apiData.data?.pagination.currentPage)); // Assuming API provides `total` items count
-          // if  donation retrive successfully notify
-          notify(apiData.message, apiData.success);
-        } else {
-          notify("No data found", true);
-          setFilteredData([]);
-        }
-      }
-
-      if (startDate.length && endDate.length) {
-        console.log(startDate, endDate, "searchDonationsByDateApi");
-
-        const CustomApiResponse = await searchDonationsByDateApi(
-          startDate,
-          endDate
-        );
-
-        const apiData = CustomApiResponse?.apiResponse;
-        console.log(apiData.data.donations, "apiData");
-
-        if (apiData.data) {
-          // console.log(apiData.data.donation, "data from the api");
-          setFilteredData(apiData?.data?.donations);
-
-          setTotalPages(Math.ceil(apiData.data?.pagination.totalPages)); // Assuming API provides `total` items count
-          setCurrentPage(Math.ceil(apiData.data?.pagination.currentPage)); // Assuming API provides `total` items count
-          // if  donation retrive successfully notify
-          notify(apiData.message, apiData.success);
-        } else {
-          notify("No data found", true);
-          setFilteredData([]);
-        }
-      }
-    } catch (error: any) {
-      console.error(error);
-      notify(error.apiResponse?.data.message, false);
-    }
-
-    //
-    //   setFilteredData(filtered);
-  };
+  const [pagination, setPagination] = useState<PaginationState>({
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    totalItems: 0,
+    currentPage: 1,
+  });
 
   // it fatches the all the list without fileter
   const fetchDefaultList = async (message: string | undefined = undefined) => {
@@ -96,7 +35,7 @@ const Donations: React.FC = () => {
       const CustomApiResponse = await notify(
         "",
         false,
-        getDonationListApi(page, limit)
+        getDonationListApi(pagination.page, pagination.limit)
       );
 
       const apiData = CustomApiResponse?.apiResponse;
@@ -105,10 +44,12 @@ const Donations: React.FC = () => {
       if (apiData.data) {
         // console.log(apiData.data.donation, "data from the api");
         setFilteredData(apiData?.data?.donations);
-
-        setTotalPages(Math.ceil(apiData.data?.pagination.totalPages)); // Assuming API provides `total` items count
-        setTotalItems(Math.ceil(apiData.data?.pagination.totalItems)); // Assuming API provides `total` items count
-        setCurrentPage(Math.ceil(apiData.data?.pagination.currentPage)); // Assuming API provides `total` items count
+        setPagination((prev: any) => ({
+          ...prev,
+          totalPages: apiData.data.pagination.totalPages,
+          totalItems: apiData.data.pagination.totalItems,
+          currentPage: apiData.data.pagination.currentPage,
+        }));
         // if  donation retrive successfully notify
         notify(message || apiData.message, apiData.success);
       }
@@ -118,8 +59,8 @@ const Donations: React.FC = () => {
   };
   // Handle Previous and Next buttons
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setpage(newPage);
+    if (newPage < 1 || newPage > pagination.totalPages) return;
+    setPagination((prev: any) => ({ ...prev, page: newPage }));
   };
   const handleViewReciept = async (receiptNo: number) => {
     try {
@@ -128,16 +69,30 @@ const Donations: React.FC = () => {
       notify(error.apiResponse?.data.message, false);
     }
   };
+
   useEffect(() => {
-    fetchDefaultList();
-  }, [page]);
+    if (
+      recentFilters.donationCategory.submit === false &&
+      recentFilters.searchText.submit === false &&
+      recentFilters.startDate.submit === false &&
+      recentFilters.endDate.submit === false
+    ) {
+      fetchDefaultList();
+    }
+  }, [pagination.page]);
 
   return (
     <>
       <SearchSection
-        onSearch={handleSearch}
+        setRecentFilters={setRecentFilters}
+        recentFilters={recentFilters}
+        filteredData={filteredData}
+        setFilteredData={setFilteredData}
+        pagination={pagination}
+        setPagination={setPagination}
         refresh={fetchDefaultList}
       ></SearchSection>
+
       <div className="overflow-x-hidden mt-10 p-0 main-page_container shadow-mainShadow ">
         <div className="overflow-x-auto">
           <table>
@@ -180,21 +135,22 @@ const Donations: React.FC = () => {
           <div className="px-4 py-4 flex justify-between items-center mt-4">
             <div>
               <span className="text-gray-700 text-xs font-bold ">
-                Showing {currentPage} to {totalPages} of {totalItems} results
+                Showing {pagination.currentPage} to {pagination.totalPages} of{" "}
+                {pagination.totalItems} results
               </span>
             </div>
             <div className="space-x-2">
               <button
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1}
                 className="normal-button-bg-secondary disabled:opacity-50"
               >
                 Previous
               </button>
 
               <button
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === totalPages}
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.totalPages}
                 className="normal-button-bg-secondary disabled:opacity-50"
               >
                 Next

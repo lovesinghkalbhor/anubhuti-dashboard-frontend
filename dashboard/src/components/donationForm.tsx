@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import notify from "./notify";
 import { addDonationApi } from "../dataFetching/donationApi/donation.api";
 import { AddDonationValidationSchema } from "../validationchema/validation";
-import { ItemInterface } from "../utils/types";
+import { ItemInterface, DonationCategory } from "../utils/types";
 const AddDonationForm: React.FC = () => {
   const initialValues = {
     donorName: "",
@@ -14,6 +14,10 @@ const AddDonationForm: React.FC = () => {
     address: "",
     amount: 0,
     purpose: "",
+    donationCategory: "",
+    paymenMode: "",
+    paymentMethod: "",
+    ddNumber: "",
     items: [],
   };
 
@@ -21,7 +25,7 @@ const AddDonationForm: React.FC = () => {
 
   // Add a new item to the list
   const handleAddItem = () => {
-    setItems([...items, { name: "", quantity: "" }]);
+    setItems([...items, { name: "", quantity: "", approx: "" }]);
   };
 
   // Remove a specific item from the list
@@ -61,9 +65,9 @@ const AddDonationForm: React.FC = () => {
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { setSubmitting, resetForm, setFieldError }: any
+    { setSubmitting, resetForm, setFieldError, setValues }: any
   ) => {
-    // console.log(values);
+    console.log(values);
     // console.log(items);
 
     if (!values.pan && !values.aadhar) {
@@ -75,7 +79,21 @@ const AddDonationForm: React.FC = () => {
       setFieldError("amount", "Either Amount or Items is required.");
       return;
     }
+    if (values.paymentMethod === "DD" && !values.ddNumber) {
+      setFieldError("ddNumber", "DD Number is required.");
+      return;
+    }
 
+    if (values.ddNumber && values.paymenMode === "DD") {
+      setValues((values: any) => ({
+        ...values,
+        paymentMethod: `DD-${values.ddNumber}`,
+      }));
+    }
+    setValues((values: any) => ({
+      ...values,
+      paymentMethod: values.paymenMode,
+    }));
     // if items array is invalid then return from the function and do not submit
     if (filteredItems(items)) {
       return;
@@ -182,6 +200,53 @@ const AddDonationForm: React.FC = () => {
                   className="text-red-500 text-sm"
                 />
               </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="font-semibold">Payment Method</label>
+                  <div className="flex gap-4 mt-2">
+                    {["Cash", "Cheque", "UPI", "DD"].map((method) => (
+                      <label key={method} className="flex items-center gap-2">
+                        <Field
+                          type="radio"
+                          name="paymenMode"
+                          value={method.toUpperCase()}
+                          // make the DD value "" on changing of paymentMode
+                          className="w-4 h-4"
+                        />
+                        {method}
+                      </label>
+                    ))}
+                  </div>
+                  <ErrorMessage
+                    name="paymenMode"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                {/* Conditional DD Number Field */}
+                <Field name="paymenMode">
+                  {({ field }: any) =>
+                    field.value === "DD" ? (
+                      <div>
+                        <label>DD Number</label>
+                        <Field
+                          type="text"
+                          name="ddNumber"
+                          id="ddNumber"
+                          className="w-full"
+                        />
+                        <ErrorMessage
+                          name="ddNumber"
+                          component="div"
+                          className="text-red-500 text-sm"
+                        />
+                      </div>
+                    ) : null
+                  }
+                </Field>
+              </div>
             </div>
 
             {/* second column */}
@@ -210,7 +275,7 @@ const AddDonationForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label>Purpose of Donation</label>
+                <label>Purpose Donation</label>
                 <Field
                   as="textarea"
                   name="purpose"
@@ -223,6 +288,41 @@ const AddDonationForm: React.FC = () => {
                   component="div"
                   className="text-red-500 text-sm"
                 />
+              </div>
+              <div className="space-y-6">
+                <div>
+                  <label className="font-semibold">Donation Category</label>
+                  <div className="flex flex-col gap-4 mt-2">
+                    <Field
+                      as="select"
+                      name="donationCategory"
+                      className="border text-sm focus:outline-slate-600 rounded-md p-2 w-full"
+                    >
+                      <option value="" disabled>
+                        Select a donation category
+                      </option>
+                      {Object.keys(DonationCategory).map((category) => (
+                        <Field
+                          as="option"
+                          className="text-sm"
+                          key={category}
+                          value={category}
+                        >
+                          {
+                            DonationCategory[
+                              category as keyof typeof DonationCategory
+                            ]
+                          }
+                        </Field>
+                      ))}
+                    </Field>
+                  </div>
+                  <ErrorMessage
+                    name="donationCategory"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
               </div>
             </div>
 
@@ -259,9 +359,17 @@ const AddDonationForm: React.FC = () => {
                       onChange={(e) => handleItemChange(index, e)}
                       className="w-full"
                     />
+                    <input
+                      type="text"
+                      name="approx"
+                      placeholder="Approx Cost"
+                      value={item.approx}
+                      onChange={(e) => handleItemChange(index, e)}
+                      className="w-full"
+                    />
                     {!item.name.trim() || !item.quantity.trim() ? (
-                      <h6 className="text-red-600 text-xs font-bold">
-                        Both item name and quantity must be filled{" "}
+                      <h6 className="text-red-600 text-xs font-semibold">
+                        All the fileds must be filled{" "}
                       </h6>
                     ) : null}
                     <button

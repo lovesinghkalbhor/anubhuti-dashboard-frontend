@@ -25,13 +25,19 @@ const createWindow = () => {
     });
 
     // Load the React app from the correct path
-    const appPath = app.getAppPath();
-    win.loadFile(path.join(appPath, 'dashboard', 'dist', 'index.html'));
-    // Uncomment for development
-    // if (process.env.NODE_ENV === 'development') {
-    //     win.webContents.openDevTools();
-    // }
 
+    // Uncomment for development
+
+    if (app.isPackaged) {
+
+
+        const appPath = app.getAppPath();
+        win.loadFile(path.join(appPath, 'dashboard', 'dist', 'index.html'));
+    }
+    else {
+        win.loadURL('http://localhost:5173');
+        win.webContents.openDevTools();
+    }
 };
 
 // Setup IPC handlers for secure storage

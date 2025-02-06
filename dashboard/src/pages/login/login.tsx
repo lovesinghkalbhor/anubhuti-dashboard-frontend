@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     { setSubmitting, setFieldError }: any
   ) => {
     try {
-      const CustomApiResponse = await loginApi(values);
+      const CustomApiResponse = await notify("", false, loginApi(values));
 
       const apiData = CustomApiResponse?.apiResponse;
 

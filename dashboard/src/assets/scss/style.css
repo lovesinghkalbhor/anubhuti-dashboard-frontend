@@ -110,7 +110,7 @@ form hr {
   @apply mt-10 mb-16;
 }
 .search_container .search_container-input {
-  @apply flex lg:mb-0 mb-6 justify-between w-4/5 lg:gap-0 gap-11;
+  @apply flex lg:mb-0 mb-6 justify-between w-4/5  lg:gap-8  gap-11;
 }
 .search_container .search_container-input input[type=text] {
   @apply w-full;

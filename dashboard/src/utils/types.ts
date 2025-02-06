@@ -25,6 +25,7 @@ interface UpdateUserInterface {
 interface ItemInterface {
   name: string;
   quantity: string;
+  approx: string;
 }
 interface DonationDataInterface {
   donorName: string;
@@ -38,6 +39,31 @@ interface DonationDataInterface {
   // authorizedPersonName: string;
   // authorizedPersonId: number;
 }
+interface DonationListInterface {
+  receiptNo: number;
+  date: string;
+  authorizedPersonName: string;
+  donorName: string;
+  phoneNumber: string;
+  amount: number;
+  _count: any;
+}
+enum DonationCategory {
+  SCHOOL_HOSTEL_OPERATIONS = "Donation for operational activities of school and hostel",
+  LIFETIME_MEMBERSHIP = "Donation for Life time membership",
+  LIFETIME_LUNCH = "Donation for Life time lunch",
+  IN_KIND = "Donation in-kind",
+  LAND_AND_BUILDING = "Donation for Land and building",
+  OTHER = "Donation for Any other",
+}
+interface PaginationState {
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalItems: number;
+  currentPage: number;
+}
+
 export type {
   loginInterface,
   customResponse,
@@ -45,4 +71,7 @@ export type {
   UpdateUserInterface,
   DonationDataInterface,
   ItemInterface,
+  PaginationState,
+  DonationListInterface,
 };
+export { DonationCategory };

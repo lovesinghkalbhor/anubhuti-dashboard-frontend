@@ -46,11 +46,17 @@ const addDonationApi = async (data: DonationDataInterface) => {
   }
 };
 
-const searchDonationByDetailsApi = async (details: string) => {
+const searchDonationByDetailsApi = async (
+  details: string,
+  page: number,
+  limit: number
+) => {
   try {
+    alert(details);
+
     console.log(details, "searchText, startDate, endDate");
     const response = await api.get(`/donations/search`, {
-      params: { search: details },
+      params: { search: details, page, limit },
     });
     if (response.status == 204) {
       return new CustomApiResponse(
@@ -67,10 +73,33 @@ const searchDonationByDetailsApi = async (details: string) => {
   }
 };
 
-const searchDonationsByDateApi = async (startDate: string, endDate: string) => {
+const searchDonationsByDateApi = async (
+  startDate: string,
+  endDate: string,
+  page: number,
+  limit: number
+) => {
   try {
     console.log(startDate, endDate, "searchDonationsByDateApi");
     const response = await api.get(`/donations/filterByDate`, {
+      params: { startDate, endDate, page, limit },
+    });
+
+    const returnValue = new CustomApiResponse(response.data, false, true);
+    return returnValue;
+  } catch (error: any) {
+    console.log(error);
+    handleApiError(error);
+  }
+};
+
+const calculateDonationsByDateApi = async (
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    console.log(startDate, endDate, "searchDonationsByDateApi");
+    const response = await api.get(`/donations/calculateDonationsByDate`, {
       params: { startDate, endDate },
     });
 
@@ -82,10 +111,30 @@ const searchDonationsByDateApi = async (startDate: string, endDate: string) => {
   }
 };
 
+const filterDonations = async (
+  donationCategory: string,
+  paymentMethod: string,
+  page: number,
+  limit: number
+) => {
+  try {
+    const response = await api.get(`/donations/filter`, {
+      params: { donationCategory, paymentMethod, page, limit },
+    });
+
+    const returnValue = new CustomApiResponse(response.data, false, true);
+    return returnValue;
+  } catch (error: any) {
+    handleApiError(error);
+  }
+};
+
 export {
   getDonationListApi,
   getDonationByIdApi,
   addDonationApi,
   searchDonationByDetailsApi,
   searchDonationsByDateApi,
+  calculateDonationsByDateApi,
+  filterDonations,
 };
