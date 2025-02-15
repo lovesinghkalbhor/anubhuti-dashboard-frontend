@@ -55,11 +55,12 @@
       "createDesktopShortcut": true
     }
   },
-  "author": "",
+  "author": "Growthify services",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.7",
     "electron-download": "^4.1.1",
+    "electron-updater": "^6.3.9",
     "keytar": "^7.9.0"
   },
   "devDependencies": {

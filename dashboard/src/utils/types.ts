@@ -25,7 +25,7 @@ interface UpdateUserInterface {
 interface ItemInterface {
   name: string;
   quantity: string;
-  approx: string;
+  approxAmount: string;
 }
 interface DonationDataInterface {
   donorName: string;

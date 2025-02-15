@@ -3,11 +3,8 @@ import SearchSection from "../../components/search";
 import notify from "../../components/notify";
 import { PaginationState, DonationListInterface } from "../../utils/types";
 import {
-  filterDonations,
   getDonationByIdApi,
   getDonationListApi,
-  searchDonationByDetailsApi,
-  searchDonationsByDateApi,
 } from "../../dataFetching/donationApi/donation.api";
 import { formatDate } from "../../utils/helperFuntions";
 

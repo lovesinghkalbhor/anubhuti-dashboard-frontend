@@ -25,7 +25,7 @@ const AddDonationForm: React.FC = () => {
 
   // Add a new item to the list
   const handleAddItem = () => {
-    setItems([...items, { name: "", quantity: "", approx: "" }]);
+    setItems([...items, { name: "", quantity: "", approxAmount: "" }]);
   };
 
   // Remove a specific item from the list
@@ -37,17 +37,21 @@ const AddDonationForm: React.FC = () => {
   // Filter and validate items
   const filteredItems = (items: any[]) => {
     let isInvalidItems = false;
-    const itemsArray = items.filter((item) => {
-      const isNameEmpty = !item.name || item.name.trim() === "";
-      const isQuantityEmpty = !item.quantity || item.quantity.trim() === "";
 
+    const itemsArray = items.filter((item) => {
+      // name = love return false
+      const isNameEmpty = item.name.trim();
+      const isQuantityEmpty = item.quantity.trim();
+      const isApproxAmountEmpty = item.approxAmount.trim();
       // If one of the fields is empty, show notification and exit
-      if (isNameEmpty !== isQuantityEmpty) {
-        notify("Both item name and quantity must be filled.", false);
+      if (!isNameEmpty || !isQuantityEmpty || !isApproxAmountEmpty) {
+        notify(
+          "All the fields name, quantity and Approx amount must be filled.",
+          false
+        );
         isInvalidItems = true;
         return true; // This ensures we skip processing further
-      } else if (isNameEmpty == true && isQuantityEmpty == true) {
-        return false; // This ensures we skip processing further
+        // This ensures we skip processing further
       } else {
         return true; // This ensures we skip processing further
       }
@@ -79,12 +83,12 @@ const AddDonationForm: React.FC = () => {
       setFieldError("amount", "Either Amount or Items is required.");
       return;
     }
-    if (values.paymentMethod === "DD" && !values.ddNumber) {
+
+    // checking if the payment method is correct
+    if (values.paymenMode === "DD" && !values.ddNumber) {
       setFieldError("ddNumber", "DD Number is required.");
       return;
-    }
-
-    if (values.ddNumber && values.paymenMode === "DD") {
+    } else if (values.ddNumber && values.paymenMode === "DD") {
       setValues((values: any) => ({
         ...values,
         paymentMethod: `DD-${values.ddNumber}`,
@@ -94,12 +98,25 @@ const AddDonationForm: React.FC = () => {
       ...values,
       paymentMethod: values.paymenMode,
     }));
+
     // if items array is invalid then return from the function and do not submit
     if (filteredItems(items)) {
       return;
     }
 
-    const ItemAdded = { ...values, items: items };
+    const ItemAdded = {
+      donorName: values.donorName,
+      phoneNumber: values.phoneNumber,
+      aadhar: values.aadhar,
+      pan: values.pan,
+      address: values.address,
+      amount: values.amount,
+      purpose: values.purpose,
+      donationCategory: values.donationCategory,
+      paymentMethod: values.paymentMethod,
+      items: items,
+    };
+
     try {
       const CustomApiResponse = await notify(
         "",
@@ -361,13 +378,15 @@ const AddDonationForm: React.FC = () => {
                     />
                     <input
                       type="text"
-                      name="approx"
+                      name="approxAmount"
                       placeholder="Approx Cost"
-                      value={item.approx}
+                      value={item.approxAmount}
                       onChange={(e) => handleItemChange(index, e)}
                       className="w-full"
                     />
-                    {!item.name.trim() || !item.quantity.trim() ? (
+                    {!item.name.trim() ||
+                    !item.quantity.trim() ||
+                    !item.approxAmount.trim() ? (
                       <h6 className="text-red-600 text-xs font-semibold">
                         All the fileds must be filled{" "}
                       </h6>

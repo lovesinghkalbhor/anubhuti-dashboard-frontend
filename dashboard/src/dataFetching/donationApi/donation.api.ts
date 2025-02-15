@@ -39,6 +39,8 @@ const addDonationApi = async (data: DonationDataInterface) => {
   try {
     const response = await api.post(`/donations/addDonation`, data);
 
+    console.log(data, "donation added");
+
     const returnValue = new CustomApiResponse(response.data, false, true);
     return returnValue;
   } catch (error: any) {
