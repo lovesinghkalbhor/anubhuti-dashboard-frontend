@@ -15,7 +15,7 @@ const AddDonationForm: React.FC = () => {
     amount: 0,
     purpose: "",
     donationCategory: "",
-    paymenMode: "",
+    paymentMode: "",
     paymentMethod: "",
     ddNumber: "",
     items: [],
@@ -71,7 +71,6 @@ const AddDonationForm: React.FC = () => {
     values: typeof initialValues,
     { setSubmitting, resetForm, setFieldError, setValues }: any
   ) => {
-    console.log(values);
     // console.log(items);
 
     if (!values.pan && !values.aadhar) {
@@ -84,20 +83,22 @@ const AddDonationForm: React.FC = () => {
       return;
     }
 
-    // checking if the payment method is correct
-    if (values.paymenMode === "DD" && !values.ddNumber) {
-      setFieldError("ddNumber", "DD Number is required.");
-      return;
-    } else if (values.ddNumber && values.paymenMode === "DD") {
-      setValues((values: any) => ({
-        ...values,
-        paymentMethod: `DD-${values.ddNumber}`,
-      }));
-    }
     setValues((values: any) => ({
       ...values,
-      paymentMethod: values.paymenMode,
+      paymentMethod: values.paymentMode,
     }));
+    // checking if the payment method is correct
+    if (values.paymentMode == "DD") {
+      if (values.ddNumber) {
+        setValues((prevValues: any) => ({
+          ...prevValues,
+          paymentMethod: `DD-${values.ddNumber}`, // Override for DD with number
+        }));
+      } else {
+        setFieldError("ddNumber", "DD Number is required.");
+        return;
+      }
+    }
 
     // if items array is invalid then return from the function and do not submit
     if (filteredItems(items)) {
@@ -226,7 +227,7 @@ const AddDonationForm: React.FC = () => {
                       <label key={method} className="flex items-center gap-2">
                         <Field
                           type="radio"
-                          name="paymenMode"
+                          name="paymentMode"
                           value={method.toUpperCase()}
                           // make the DD value "" on changing of paymentMode
                           className="w-4 h-4"
@@ -236,16 +237,16 @@ const AddDonationForm: React.FC = () => {
                     ))}
                   </div>
                   <ErrorMessage
-                    name="paymenMode"
+                    name="paymentMode"
                     component="div"
                     className="text-red-500 text-sm"
                   />
                 </div>
 
                 {/* Conditional DD Number Field */}
-                <Field name="paymenMode">
+                <Field name="paymentMode">
                   {({ field }: any) =>
-                    field.value === "DD" ? (
+                    field.value == "DD" ? (
                       <div>
                         <label>DD Number</label>
                         <Field

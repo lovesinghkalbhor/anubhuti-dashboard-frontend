@@ -2,7 +2,7 @@ import api from "../../utils/axios";
 import { CustomApiResponse } from "../../utils/apiResponse";
 import { handleApiError } from "../../utils/apiErrors";
 import { DonationDataInterface } from "../../utils/types";
-
+import { handleConvertToPDF } from "../../utils/helperFuntions";
 const getDonationListApi = async (page: number, limit: number) => {
   try {
     const response = await api.get(`/donations/getDonation`, {
@@ -131,6 +131,20 @@ const filterDonations = async (
   }
 };
 
+const downloadReciept = async (id: number) => {
+  try {
+    const response = await api.get(
+      `viewInvoice/downloadInvoice?receiptNo=${id}`
+    );
+
+    handleConvertToPDF(response.data);
+    const returnValue = new CustomApiResponse(response.data, false, true);
+
+    return returnValue;
+  } catch (error: any) {
+    handleApiError(error);
+  }
+};
 export {
   getDonationListApi,
   getDonationByIdApi,
@@ -139,4 +153,5 @@ export {
   searchDonationsByDateApi,
   calculateDonationsByDateApi,
   filterDonations,
+  downloadReciept,
 };

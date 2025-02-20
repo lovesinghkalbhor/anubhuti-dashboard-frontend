@@ -11,6 +11,7 @@ import { setUser } from "../reduxState/Features/storeuser/userSlice";
 import { useDispatch } from "react-redux";
 import ErrorBoundary from "../components/errorBoundary";
 import { ErrorForMainPage } from "../components/errorFallback";
+import updateNotifier from "../utils/updateNotification";
 
 function App() {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ function App() {
       );
     };
     getUser();
+    updateNotifier();
   }, []);
 
   return (

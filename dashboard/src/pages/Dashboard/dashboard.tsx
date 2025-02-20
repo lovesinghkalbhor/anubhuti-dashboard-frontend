@@ -6,7 +6,6 @@ function Dashboard() {
     <>
       <Cards></Cards>
       <AddDonationForm></AddDonationForm>
-
       <div className="h-screen">
         <Donations></Donations>;
       </div>

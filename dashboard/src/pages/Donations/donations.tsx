@@ -3,6 +3,7 @@ import SearchSection from "../../components/search";
 import notify from "../../components/notify";
 import { PaginationState, DonationListInterface } from "../../utils/types";
 import {
+  downloadReciept,
   getDonationByIdApi,
   getDonationListApi,
 } from "../../dataFetching/donationApi/donation.api";
@@ -66,6 +67,13 @@ const Donations: React.FC = () => {
       notify(error.apiResponse?.data.message, false);
     }
   };
+  const handleDownloadReciept = async (receiptNo: number) => {
+    try {
+      await downloadReciept(receiptNo);
+    } catch (error: any) {
+      notify(error.apiResponse?.data.message, false);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -102,6 +110,7 @@ const Donations: React.FC = () => {
                 <th>Phone Number</th>
                 <th>Amount</th>
                 <th>Items</th>
+                <th>Download</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -117,6 +126,12 @@ const Donations: React.FC = () => {
                     <td>&#8377; {donation.amount}</td>
                     <td>{donation._count.items}</td>
                     <td
+                      onClick={() => handleDownloadReciept(donation.receiptNo)}
+                      className=" text-blue-600 hover:underline cursor-pointer"
+                    >
+                      Download
+                    </td>
+                    <td
                       onClick={() => handleViewReciept(donation.receiptNo)}
                       className=" text-blue-600 hover:underline cursor-pointer"
                     >
@@ -125,7 +140,9 @@ const Donations: React.FC = () => {
                   </tr>
                 ))
               ) : (
-                <h5 className="mx-auto my-20 w-full">No data</h5>
+                <tr>
+                  <td> No data</td>
+                </tr>
               )}
             </tbody>
           </table>

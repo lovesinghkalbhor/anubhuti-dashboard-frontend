@@ -15,9 +15,14 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
+  "repository": "https://github.com/lovesinghkalbhor/anubhuti-dashboard-frontend",
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
   "build": {
     "appId": "com.anubhuti.id",
-    "productName": "Anubhuti vision seva sansthan",
+    "productName": "Anubhuti-vision-seva-sansthan",
     "files": [
       "main.js",
       "preload.js",
@@ -64,6 +69,7 @@
     "keytar": "^7.9.0"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "electron": "^33.3.1",
     "electron-builder": "^25.1.8",
     "electron-packager": "^17.1.2"

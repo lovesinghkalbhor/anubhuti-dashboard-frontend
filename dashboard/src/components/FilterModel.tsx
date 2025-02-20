@@ -22,7 +22,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
   recentFilters,
   setRecentFilters,
   onClose,
-  filteredData,
   setFilteredData,
   pagination,
   setPagination,

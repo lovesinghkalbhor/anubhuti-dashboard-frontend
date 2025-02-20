@@ -272,7 +272,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
             )}
           </div>
           <button
-            onClick={(e) => {
+            onClick={() => {
               setIsFilterModalOpen(true);
             }}
             className="flex items-center gap-2"
