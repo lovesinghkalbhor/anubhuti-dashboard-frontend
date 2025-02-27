@@ -20,21 +20,32 @@ function LoginsignupRoutes() {
       }
     } catch (error: any) {
       if (
-        error.apiResponse.data.statusCode > 500 &&
-        error.apiResponse.data.statusCode < 499
+        location.pathname !== "/login" &&
+        location.pathname !== "/register" &&
+        location.pathname !== "/"
       ) {
-        notify(error.apiResponse.data.message, false);
+        if (
+          error.apiResponse?.data.statusCode > 500 &&
+          error.apiResponse?.data.statusCode < 499
+        ) {
+          notify(error.apiResponse.data.message, false);
+        }
       }
     }
   };
 
   // Use in useEffect
   useEffect(() => {
-    if (location.pathname == "/login" || location.pathname == "/register") {
+    if (
+      location.pathname == "/login" ||
+      location.pathname == "/register" ||
+      location.pathname == "/"
+    ) {
       checkAuth();
     }
   }, [location.pathname]);
   const routes = useRoutes([
+    { path: "/", element: <Login /> },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
   ]);

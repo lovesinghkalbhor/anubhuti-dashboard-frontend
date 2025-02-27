@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const notify = (
   message: string,
-  isSuccess: boolean,
+  isSuccess: boolean = false,
   promiseFunction: Promise<any> | undefined = undefined
 ) => {
   if (promiseFunction) {
@@ -11,32 +11,43 @@ const notify = (
       // Handle the promise with toast.promise
       return toast.promise(promiseFunction, {
         pending: "Processing your request...",
-        // success: message || "Operation successful 👌",
-        // error: message || "Something went wrong 🤯",
+        success: {
+          render({ data }) {
+            return data?.apiResponse?.message || "Operation successfull";
+          },
+          // other options
+        },
+        error: {
+          render({ data }: any) {
+            return data?.apiResponse?.data.message || "something went wrong";
+          },
+        },
       });
     }
-  } else if (isSuccess) {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  } else {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    isSuccess;
+    message;
+    // } else if (isSuccess) {
+    //   toast.success(message, {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: false,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //   });
+    // } else {
+    //   toast.error(message, {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: false,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "light",
+    //   });
   }
 };
 

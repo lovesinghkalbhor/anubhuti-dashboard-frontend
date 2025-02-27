@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useRoutes, RouteObject } from "react-router";
 import Donations from "../../pages/Donations/donations";
 import User from "../../pages/Users/user";
@@ -6,7 +6,7 @@ import Dashboard from "../../pages/Dashboard/dashboard";
 import { useLocation, useNavigate } from "react-router";
 import { isTokenValid } from "../../dataFetching/userApi/user.api";
 import notify from "../../components/notify";
-const MainpageRoutes: React.FC = () => {
+const MainpageRoutes = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,20 +36,24 @@ const MainpageRoutes: React.FC = () => {
 
   // Use in useEffect
   useEffect(() => {
-    if (location.pathname !== "/login" && location.pathname !== "/register") {
+    if (
+      location.pathname !== "/login" &&
+      location.pathname !== "/register" &&
+      location.pathname !== "/"
+    ) {
       checkAuth();
     }
   }, [location.pathname]);
 
   const routes: RouteObject[] = [
-    { path: "/", element: <Donations /> },
+    // { path: "/", element: <Donations /> },
     { path: "/donation", element: <Donations /> },
     { path: "/user", element: <User /> },
     { path: "/dashboard", element: <Dashboard /> },
   ];
 
   const element = useRoutes(routes);
-  return <>{element}</>;
+  return <> {element}</>;
 };
 
 export default MainpageRoutes;
