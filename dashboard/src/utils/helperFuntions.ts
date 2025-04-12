@@ -1,3 +1,5 @@
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import html2pdf from "html2pdf.js";
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
@@ -5,6 +7,24 @@ const formatDate = (dateString: string): string => {
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
+};
+
+const exportToExcel = (data: any[], filename: string) => {
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  console.log(data, "here is the data");
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array",
+  });
+
+  const blob = new Blob([excelBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+  });
+
+  saveAs(blob, `${filename}.xlsx`);
 };
 
 const validateSearchText = (text: string): boolean => {
@@ -88,4 +108,10 @@ const handleConvertToPDF = (htmlContent: any) => {
 //   .set(opt) // Configuration options
 //   .save(); // Trigger download
 
-export { formatDate, validateSearchText, validateDate, handleConvertToPDF };
+export {
+  formatDate,
+  validateSearchText,
+  validateDate,
+  handleConvertToPDF,
+  exportToExcel,
+};

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import notify from "./notify";
-import { addDonationApi } from "../dataFetching/donationApi/donation.api";
-import { AddDonationValidationSchema } from "../validationchema/validation";
-import { DonationCategory } from "../utils/types";
+import notify from "../../components/notify";
+import { editDonationApi } from "../../dataFetching/donationApi/donation.api";
+import { useParams } from "react-router-dom";
+import { AddDonationValidationSchema } from "../../validationchema/validation";
+import { DonationCategory } from "../../utils/types";
+import { useDonationData } from "../../utils/customHooks";
 
 const countryCodes = [
   { name: "Afghanistan", code: "+93" },
@@ -71,29 +73,66 @@ const countryCodes = [
   { name: "Zimbabwe", code: "+263" },
 ];
 
-const AddDonationForm: React.FC = () => {
+const EditDonationForm: React.FC = () => {
+  const { id } = useParams();
+  const { donationData } = useDonationData(String(id));
+  const [donationCategory, setDonationCategory] = useState("");
+  const [otherDonation, setotherDonation] = useState("");
+  const [bank, setBank] = useState("");
+  const [chequeNumber, setchequeNumber] = useState("");
+  const [paymentMode, setpaymentMode] = useState("");
+  const [ddNumber, setddNumber] = useState("");
+
+  useEffect(() => {
+    let a = Object.entries(DonationCategory).find(
+      ([_, val]) => val === donationData.donationCategory
+    )?.[0];
+    setDonationCategory(a ?? "");
+
+    if (donationData.donationCategory.startsWith("OTHER")) {
+      setDonationCategory("OTHER");
+      setotherDonation(donationData?.donationCategory?.split("-")[1] || "");
+    }
+    setpaymentMode(donationData?.paymentMethod?.split("-")[0] || "");
+
+    if (donationData.paymentMethod.startsWith("UPI")) {
+      let bankName = donationData.paymentMethod.replace("UPI-", "");
+      setBank(bankName);
+    }
+    if (donationData.paymentMethod.startsWith("DD")) {
+      let ddNumber = donationData.paymentMethod.replace("DD-", "");
+      setddNumber(ddNumber);
+    }
+    if (donationData.paymentMethod.startsWith("CHEQUE")) {
+      let chequeNumber = donationData.paymentMethod.replace("CHEQUE-", "");
+      setchequeNumber(chequeNumber);
+    }
+  }, [donationData]);
   const initialValues = {
-    donorName: "",
-    phoneNumber: "",
-    countryCodes: countryCodes.find((c) => c.name === "India")?.code || "",
-    aadhar: "",
-    pan: "",
-    address: "",
-    amount: 0,
-    purpose: "",
-    donationCategory: "",
-    paymentMode: "",
-    paymentMethod: "",
-    ddNumber: "",
-    chequeNumber: "",
-    bank: "",
-    donationCategoryOther: "",
+    donorName: donationData?.donorName || "",
+    phoneNumber: donationData?.phoneNumber || "",
+    countryCodes: donationData?.countryCode || "",
+    aadhar: donationData?.aadhar || "",
+    pan: donationData?.pan || "",
+    address: donationData?.address || "",
+    amount: donationData?.amount || 0,
+    purpose: donationData?.purpose || "",
+    donationCategory: donationCategory || "",
+    donationCategoryOther: otherDonation || "",
+    paymentMode: paymentMode,
+    paymentMethod: donationData?.paymentMethod || "",
+    ddNumber: ddNumber || "",
+    bank: bank,
+    chequeNumber: chequeNumber,
+    // items: donationData?.items || [],
   };
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { setSubmitting, resetForm, setFieldError }: any
+    { setSubmitting, setFieldError }: any
   ) => {
+    // console.log(items);
+
     if (!values.pan && !values.aadhar) {
       setFieldError("pan", "Either Pan or aadhar is required.");
       setFieldError("aadhar", "Either Pan or aadhar is required.");
@@ -107,6 +146,7 @@ const AddDonationForm: React.FC = () => {
     // checking if the payment method is correct
     let finalPaymentMethod = values.paymentMode; // Start with the base payment mode
 
+    // checking if the payment method is correct
     if (values.paymentMode === "DD") {
       if (values.ddNumber) {
         finalPaymentMethod = `DD-${values.ddNumber}`;
@@ -130,38 +170,31 @@ const AddDonationForm: React.FC = () => {
       }
     }
 
-    let customdonationCategory;
-
-    if (values.donationCategoryOther) {
-      customdonationCategory = `OTHER-${values.donationCategoryOther}`;
-    } else {
-      customdonationCategory = values.donationCategory;
-    }
-
     const AddedData = {
+      donationId: id,
       donorName: values.donorName,
       phoneNumber: values.phoneNumber,
+      countryCode: values.countryCodes,
       aadhar: values.aadhar,
       pan: values.pan,
-      countryCode: values.countryCodes,
       address: values.address,
       amount: values.amount,
       purpose: values.purpose,
-      donationCategory: customdonationCategory,
+      donationCategory: values.donationCategory,
       paymentMethod: finalPaymentMethod,
+      // items: items,
     };
 
     try {
       const CustomApiResponse = await notify(
         "",
         false,
-        addDonationApi(AddedData)
+        editDonationApi(AddedData)
       );
       const apiData = CustomApiResponse?.apiResponse;
 
       if (apiData.data) {
         notify(apiData.message, apiData.success);
-        resetForm();
       }
     } catch (error: any) {
       notify(error.apiResponse.data.message, false);
@@ -171,11 +204,13 @@ const AddDonationForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white p-10 py-16  rounded-lg  w-full">
+    <div className="bg-white p-10 -mt-10   rounded-lg  w-full">
+      {/* <h2 className="text-2xl font-semibold mb-16">New Donation</h2> */}
       <Formik
         initialValues={initialValues}
         validationSchema={AddDonationValidationSchema}
         onSubmit={handleSubmit}
+        enableReinitialize
       >
         <Form>
           <div className="grid lg:grid-cols-3 grid-cols-2 gap-8 justify-items-center">
@@ -184,7 +219,7 @@ const AddDonationForm: React.FC = () => {
             {/* first column */}
             <div className="space-y-6">
               <div>
-                <label>Donor Name *</label>
+                <label>Donor Name</label>
                 <Field
                   type="text"
                   name="donorName"
@@ -199,7 +234,7 @@ const AddDonationForm: React.FC = () => {
               </div>
 
               <div>
-                <label>Country*</label>
+                <label>Country:</label>
                 <Field as="select" name="countryCodes" id="countrySelect">
                   {countryCodes.map((country) => (
                     <option key={country.name} value={country.code}>
@@ -210,7 +245,7 @@ const AddDonationForm: React.FC = () => {
               </div>
 
               <div>
-                <label>Mobile Number *</label>
+                <label>Mobile Number</label>
                 <Field
                   type="text"
                   name="phoneNumber"
@@ -224,7 +259,7 @@ const AddDonationForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label>Aadhar Card Number *</label>
+                <label>Aadhar Card Number</label>
                 <Field
                   type="text"
                   name="aadhar"
@@ -238,7 +273,7 @@ const AddDonationForm: React.FC = () => {
                 />
               </div>
               <div className="col-span-2">
-                <label>Address *</label>
+                <label>Address</label>
                 <Field
                   type="text"
                   name="address"
@@ -254,7 +289,7 @@ const AddDonationForm: React.FC = () => {
 
               <div className="space-y-6">
                 <div>
-                  <label className="font-semibold">Payment Method *</label>
+                  <label className="font-semibold">Payment Method</label>
                   <div className="flex gap-4 mt-2">
                     {["CASH", "CHEQUE", "UPI", "DD"].map((method) => (
                       <label key={method} className="flex items-center gap-2">
@@ -262,6 +297,7 @@ const AddDonationForm: React.FC = () => {
                           type="radio"
                           name="paymentMode"
                           value={method}
+                          // make the DD value "" on changing of paymentMode
                           className="w-4 h-4"
                         />
                         {method}
@@ -323,12 +359,14 @@ const AddDonationForm: React.FC = () => {
                     field.value == "UPI" ? (
                       <div className="flex flex-col space-y-1">
                         <label>Select bank</label>
-                        <Field as="select" name="bank" id="countrySelect">
-                          {[
-                            "Punjab National Bank",
-                            "Canara Bank",
-                            "State Bank of india",
-                          ].map((bank) => (
+                        <Field
+                          as="select"
+                          name="bank"
+                          id="countrySelect"
+                          // onChange={handleCountryChange}
+                          // value={selectedCountry.name}
+                        >
+                          {["Punjab", "Axis", "Central"].map((bank) => (
                             <option key={bank} value={bank}>
                               {bank}
                             </option>
@@ -349,7 +387,7 @@ const AddDonationForm: React.FC = () => {
             {/* second column */}
             <div className="space-y-6">
               <div>
-                <label>Amount*</label>
+                <label>Amount</label>
                 <Field
                   type="text"
                   name="amount"
@@ -364,13 +402,7 @@ const AddDonationForm: React.FC = () => {
               </div>
               <div>
                 <label>Pan Card</label>
-                <Field
-                  type="text"
-                  name="pan"
-                  id="pan"
-                  className="w-full"
-                  placeholder="Optional"
-                />
+                <Field type="text" name="pan" id="pan" className="w-full" />
                 <ErrorMessage
                   name="pan"
                   component="div"
@@ -378,7 +410,7 @@ const AddDonationForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label>Purpose Donation *</label>
+                <label>Purpose Donation</label>
                 <Field
                   as="textarea"
                   name="purpose"
@@ -394,7 +426,7 @@ const AddDonationForm: React.FC = () => {
               </div>
               <div className="space-y-6">
                 <div>
-                  <label className="font-semibold">Donation Category *</label>
+                  <label className="font-semibold">Donation Category</label>
                   <div className="flex flex-col gap-4 mt-2">
                     <Field
                       as="select"
@@ -453,4 +485,4 @@ const AddDonationForm: React.FC = () => {
   );
 };
 
-export default AddDonationForm;
+export default EditDonationForm;

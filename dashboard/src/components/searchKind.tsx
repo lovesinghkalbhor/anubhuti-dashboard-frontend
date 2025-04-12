@@ -4,11 +4,11 @@ import { MdOutlineCancel } from "react-icons/md";
 import { validateSearchText, validateDate } from "../utils/helperFuntions";
 import notify from "./notify";
 import { FaFilter } from "react-icons/fa6";
+import FilterModal from "./FilterModel";
 import {
-  searchDonationByDetailsApi,
-  searchDonationsByDateApi,
+  searchKindDonationsByDateApi,
+  searchKindDonationByDetailsApi,
 } from "../dataFetching/donationApi/donation.api";
-import FilterModalKind from "./FilterModelKind";
 
 interface SearchSectionProps {
   refresh: (message: string | undefined) => Promise<void>;
@@ -22,16 +22,16 @@ interface SearchSectionProps {
   setEndDateExcel: any;
 }
 
-const SearchSection: React.FC<SearchSectionProps> = ({
+const SearchSectionKind: React.FC<SearchSectionProps> = ({
   refresh,
   setRecentFilters,
   recentFilters,
   filteredData,
   setFilteredData,
   pagination,
+  setPagination,
   setStartDateExcel,
   setEndDateExcel,
-  setPagination,
 }) => {
   const [searchText, setSearchText] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -64,15 +64,17 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         const CustomApiResponse = await notify(
           "",
           false,
-          searchDonationByDetailsApi(
+          searchKindDonationByDetailsApi(
             searchText,
             pagination.page,
             pagination.limit
           )
         );
         const apiData = CustomApiResponse?.apiResponse;
+        console.log(apiData.data.donations, "apiData");
 
         if (apiData.data) {
+          // console.log(apiData.data.donation, "data from the api");
           setFilteredData(apiData?.data?.donations);
 
           setPagination((prev: any) => ({
@@ -90,7 +92,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
       }
 
       if (startDate.length && endDate.length) {
-        const CustomApiResponse = await searchDonationsByDateApi(
+        const CustomApiResponse = await searchKindDonationsByDateApi(
           startDate,
           endDate,
           pagination.page,
@@ -311,7 +313,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         </div>
       </div>
       {/* Filter Modal */}
-      <FilterModalKind
+      <FilterModal
         setRecentFilters={setRecentFilters}
         recentFilters={recentFilters}
         isOpen={isFilterModalOpen}
@@ -325,4 +327,4 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   );
 };
 
-export default SearchSection;
+export default SearchSectionKind;

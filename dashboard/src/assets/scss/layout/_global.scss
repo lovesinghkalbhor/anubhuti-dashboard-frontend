@@ -23,9 +23,11 @@ table {
 }
 
 input[type="text"],
+// input[type="select"],
 input[type="password"],
 input[type="email"],
 input[type="number"],
+#countrySelect,
 textarea {
   @apply placeholder:text-xs  border-solid border-gray-300 border-2 px-3 pt-[0.1rem] pb-1 rounded-md;
   &:focus {

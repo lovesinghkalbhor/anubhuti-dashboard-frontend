@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
-import SearchSection from "../../components/search";
 import notify from "../../components/notify";
 import { PaginationState, DonationListInterface } from "../../utils/types";
 import {
-  downloadReciept,
-  getDonationByIdApi,
-  getDonationListApi,
-  searchDonationsByDateApiExcel,
+  getKindDonationByIdApi,
+  downloadKindReciept,
+  getKindDonationListApi,
+  searchKindDonationsByDateApiExcel,
 } from "../../dataFetching/donationApi/donation.api";
-import { formatDate } from "../../utils/helperFuntions";
-import { useNavigate } from "react-router-dom";
-import { exportToExcel } from "../../utils/helperFuntions";
+import { exportToExcel, formatDate } from "../../utils/helperFuntions";
+import { Form, useNavigate } from "react-router-dom";
+import SearchSectionKind from "../../components/searchKind";
 
-const Donations: React.FC = () => {
+const DonationsKind: React.FC = () => {
   const navigate = useNavigate();
   const [filteredData, setFilteredData] = useState<DonationListInterface[]>([]);
 
@@ -41,14 +40,13 @@ const Donations: React.FC = () => {
       const CustomApiResponse = await notify(
         "",
         false,
-        getDonationListApi(pagination.page, pagination.limit)
+        getKindDonationListApi(pagination.page, pagination.limit)
       );
 
       const apiData = CustomApiResponse?.apiResponse;
       console.log(apiData.data.donations, "apiData");
 
       if (apiData.data) {
-        // console.log(apiData.data.donation, "data from the api");
         setFilteredData(apiData?.data?.donations);
         setPagination((prev: any) => ({
           ...prev,
@@ -69,25 +67,26 @@ const Donations: React.FC = () => {
     setPagination((prev: any) => ({ ...prev, page: newPage }));
   };
 
-  //////////////////////////////////////////////////////////////
-  const handleViewReciept = async (id: number) => {
+  /////////////////////////////////////////////////////////////////
+  const handleViewReciept = async (receiptNo: number) => {
     try {
-      await getDonationByIdApi(id);
+      await getKindDonationByIdApi(receiptNo);
     } catch (error: any) {
       notify(error.apiResponse?.data.message, false);
     }
   };
   /////////////////////////////////////////////////////////////
-  const handleDownloadReciept = async (id: number) => {
+  const handleDownloadReciept = async (receiptNo: number) => {
     try {
-      await downloadReciept(id);
+      await downloadKindReciept(receiptNo);
     } catch (error: any) {
       notify(error.apiResponse?.data.message, false);
     }
   };
 
-  const handleDonationEdit = async (id: number) => {
-    navigate(`/editdonation/${id}`);
+  ////////////////////////////////////////////////////////////
+  const handleDonationEdit = async (receiptNo: number) => {
+    navigate(`/editKindDonation/${receiptNo}`);
   };
 
   const DownloadExcel = async (
@@ -98,15 +97,24 @@ const Donations: React.FC = () => {
       const CustomApiResponse = await notify(
         "",
         false,
-        searchDonationsByDateApiExcel(startDateExcel, endDateExcel)
+        searchKindDonationsByDateApiExcel(startDateExcel, endDateExcel)
       );
 
       const apiData = CustomApiResponse?.apiResponse;
-      console.log(apiData.data.donations, "apiData");
 
       if (apiData.data) {
         // console.log(apiData.data.donation, "data from the api");
-        exportToExcel(apiData?.data?.donations, "Donation data");
+        const formattedDonations = apiData.data.donations.map(
+          (donation: any) => ({
+            ...donation,
+            _count: null,
+            approxAmmount: donation.items[0].approxAmount,
+            Items: donation._count.items,
+          })
+        );
+        console.log(formattedDonations, "api formated data");
+
+        exportToExcel(formattedDonations, "Donation data");
 
         // if  donation retrive successfully notify
         notify(apiData.message, apiData.success);
@@ -116,6 +124,8 @@ const Donations: React.FC = () => {
     }
   };
 
+  //////////////////////////////////////////////////
+  //////////////////////////////////////////////
   useEffect(() => {
     if (
       recentFilters.donationCategory.submit === false &&
@@ -129,24 +139,23 @@ const Donations: React.FC = () => {
 
   return (
     <>
-      <SearchSection
+      <SearchSectionKind
         setRecentFilters={setRecentFilters}
         recentFilters={recentFilters}
         filteredData={filteredData}
         setFilteredData={setFilteredData}
         pagination={pagination}
+        setPagination={setPagination}
         setEndDateExcel={setEndDateExcel}
         setStartDateExcel={setStartDateExcel}
-        setPagination={setPagination}
         refresh={fetchDefaultList}
-      ></SearchSection>
+      ></SearchSectionKind>
 
       <div className="overflow-x-hidden mt-10 p-0 main-page_container shadow-mainShadow ">
         <div className="overflow-x-auto">
           <table>
             <thead>
               <tr>
-                {/* <th>id</th> */}
                 <th>Receipt No.</th>
                 <th>Date</th>
                 <th>Authorized Person</th>
@@ -154,19 +163,17 @@ const Donations: React.FC = () => {
                 <th>Mobile</th>
                 <th>Aadhar</th>
                 <th>pan</th>
-                <th>Payment Mode</th>
-                <th>Amount</th>
-                {/* <th>Items</th> */}
+                {/* <th>Amount</th> */}
+                <th>Items</th>
                 <th>Edit</th>
                 <th>Download</th>
-                <th>View</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredData.length > 0 ? (
                 filteredData.map((donation) => (
-                  <tr key={donation.id}>
-                    {/* <td>{donation.id}</td> */}
+                  <tr key={donation.receiptNo}>
                     <td>{donation.receiptNo}</td>
                     <td>{formatDate(donation.date)}</td>
                     <td>{donation.authorizedPersonName}</td>
@@ -174,9 +181,8 @@ const Donations: React.FC = () => {
                     <td>{donation.phoneNumber}</td>
                     <td>{donation.aadhar}</td>
                     <td>{donation.pan}</td>
-                    <td>{donation.paymentMethod}</td>
-                    <td>&#8377; {donation.amount}</td>
-                    {/* <td>{donation._count.items}</td> */}
+                    {/* <td>&#8377; {donation.amount}</td> */}
+                    <td>{donation._count.items}</td>
                     <td
                       onClick={() => handleDonationEdit(donation.id)}
                       className=" text-blue-600 hover:underline cursor-pointer"
@@ -241,4 +247,4 @@ const Donations: React.FC = () => {
   );
 };
 
-export default Donations;
+export default DonationsKind;

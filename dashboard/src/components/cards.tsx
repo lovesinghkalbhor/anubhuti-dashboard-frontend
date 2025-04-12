@@ -15,18 +15,14 @@ function Cards() {
   const handleSearch = async (startDate: string, endDate: string) => {
     try {
       if (startDate.length && endDate.length) {
-        console.log(startDate, endDate, "searchDonationsByDateApi");
-
         const CustomApiResponse = await calculateDonationsByDateApi(
           startDate,
           endDate
         );
 
         const apiData = CustomApiResponse?.apiResponse;
-        console.log(apiData.data.donations, "apiData");
 
         if (apiData.data) {
-          // console.log(apiData.data.donation, "data from the api");
           setCalculateByDate(apiData?.data?.totalDonations);
 
           // if  donation retrive successfully notify

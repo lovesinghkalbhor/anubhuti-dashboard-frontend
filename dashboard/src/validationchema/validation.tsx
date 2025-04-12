@@ -56,12 +56,11 @@ const AddDonationValidationSchema = Yup.object({
     .required("Donor Name is required")
     .min(3, "Donor Name must be at least 3 characters")
     .max(50, "Donor Name cannot exceed 50 characters"),
-  phoneNumber: Yup.string()
-    .required("Phone Number is required")
-    .matches(
-      /^[6-9]\d{9}$/,
-      "Phone Number must be a valid 10-digit Indian number"
-    ),
+  phoneNumber: Yup.string().required("Phone Number is required"),
+  // .matches(
+  //   /^[1-9]\d{9}$/,
+  //   "Phone Number must be a valid 10-digit Indian number"
+  // ),
   aadhar: Yup.string()
     .nullable()
     .matches(/^\d{12}$/, "Aadhar Number must be a 12-digit number")

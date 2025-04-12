@@ -16,6 +16,7 @@ interface loginInterface {
   mobile: string;
   password: string;
 }
+
 interface UpdateUserInterface {
   name: string | null;
   mobile: string | null;
@@ -39,7 +40,33 @@ interface DonationDataInterface {
   // authorizedPersonName: string;
   // authorizedPersonId: number;
 }
+interface DonationKindDataInterface {
+  donorName: string;
+  phoneNumber: string;
+  aadhar?: string; // Made optional to align with Prisma model
+  pan?: string; // Made optional to align with Prisma model
+  address: string;
+  items?: ItemInterface[]; // Made optional for monetary donations
+  purpose: string;
+  // authorizedPersonName: string;
+  // authorizedPersonId: number;
+}
+
 interface DonationListInterface {
+  id: number;
+  receiptNo: number;
+  authorizedPersonName: string;
+  date: string;
+  donorName: string;
+  phoneNumber: string;
+  aadhar: string;
+  pan: string;
+  paymentMethod: string;
+  amount: number;
+  _count: any;
+}
+interface KindsDonationListInterface {
+  id: number;
   receiptNo: number;
   date: string;
   authorizedPersonName: string;
@@ -56,6 +83,7 @@ enum DonationCategory {
   LAND_AND_BUILDING = "Donation for Land and building",
   OTHER = "Donation for Any other",
 }
+
 interface PaginationState {
   page: number;
   limit: number;
@@ -73,5 +101,7 @@ export type {
   ItemInterface,
   PaginationState,
   DonationListInterface,
+  DonationKindDataInterface,
+  KindsDonationListInterface,
 };
 export { DonationCategory };
