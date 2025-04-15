@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginApi } from "../../dataFetching/userApi/user.api";
 import { Link, useNavigate } from "react-router";
@@ -9,6 +9,8 @@ import { setUser } from "../../reduxState/Features/storeuser/userSlice";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login: React.FC = () => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -61,6 +63,11 @@ const Login: React.FC = () => {
       setSubmitting(false);
     }
   };
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <div className="bg-white h-screen flex">
@@ -90,22 +97,31 @@ const Login: React.FC = () => {
           >
             {({ isSubmitting }) => (
               <Form className="space-y-6">
-                <div>
-                  <label htmlFor="mobile" className="block mb-1 font-medium">
-                    Mobile
-                  </label>
-                  <Field
-                    type="text"
-                    id="mobile"
-                    name="mobile"
-                    className="w-full border rounded-md p-2"
-                  />
-                  <ErrorMessage
-                    name="mobile"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
+                <Field name="donorName">
+                  {({ field }: any) => (
+                    <div>
+                      <label
+                        htmlFor="mobile"
+                        className="block mb-1 font-medium"
+                      >
+                        Mobile
+                      </label>
+                      <input
+                        {...field}
+                        ref={inputRef}
+                        type="text"
+                        id="mobile"
+                        name="mobile"
+                        className="w-full border rounded-md p-2"
+                      />
+                      <ErrorMessage
+                        name="mobile"
+                        component="div"
+                        className="text-red-500 text-sm mt-1"
+                      />
+                    </div>
+                  )}
+                </Field>
 
                 <div>
                   <label htmlFor="password" className="block mb-1 font-medium">

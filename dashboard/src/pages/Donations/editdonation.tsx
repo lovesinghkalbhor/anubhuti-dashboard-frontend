@@ -359,14 +359,13 @@ const EditDonationForm: React.FC = () => {
                     field.value == "UPI" ? (
                       <div className="flex flex-col space-y-1">
                         <label>Select bank</label>
-                        <Field
-                          as="select"
-                          name="bank"
-                          id="countrySelect"
-                          // onChange={handleCountryChange}
-                          // value={selectedCountry.name}
-                        >
-                          {["Punjab", "Axis", "Central"].map((bank) => (
+                        <Field as="select" name="bank" id="countrySelect">
+                          <option value="">Select a bank</option>
+                          {[
+                            "Punjab National Bank",
+                            "Canara Bank",
+                            "State Bank of india",
+                          ].map((bank) => (
                             <option key={bank} value={bank}>
                               {bank}
                             </option>

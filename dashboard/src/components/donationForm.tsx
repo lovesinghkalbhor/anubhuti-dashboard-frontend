@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import notify from "./notify";
 import { addDonationApi } from "../dataFetching/donationApi/donation.api";
@@ -125,7 +125,7 @@ const AddDonationForm: React.FC = () => {
       if (values.bank) {
         finalPaymentMethod = `UPI-${values.bank}`;
       } else {
-        setFieldError("bank", "please select the bank, it is required.");
+        setFieldError("bank", "Please select the bank, it is required.");
         return;
       }
     }
@@ -170,6 +170,14 @@ const AddDonationForm: React.FC = () => {
     }
   };
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <div className="bg-white p-10 py-16  rounded-lg  w-full">
       <Formik
@@ -183,20 +191,25 @@ const AddDonationForm: React.FC = () => {
 
             {/* first column */}
             <div className="space-y-6">
-              <div>
-                <label>Donor Name *</label>
-                <Field
-                  type="text"
-                  name="donorName"
-                  id="donorName"
-                  className="w-full"
-                />
-                <ErrorMessage
-                  name="donorName"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+              <Field name="donorName">
+                {({ field }: any) => (
+                  <div>
+                    <label>Donor Name *</label>
+                    <input
+                      {...field}
+                      ref={inputRef}
+                      type="text"
+                      id="donorName"
+                      className="w-full"
+                    />
+                    <ErrorMessage
+                      name="donorName"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
+                )}
+              </Field>
 
               <div>
                 <label>Country*</label>
@@ -324,6 +337,7 @@ const AddDonationForm: React.FC = () => {
                       <div className="flex flex-col space-y-1">
                         <label>Select bank</label>
                         <Field as="select" name="bank" id="countrySelect">
+                          <option value="">Select a bank</option>
                           {[
                             "Punjab National Bank",
                             "Canara Bank",

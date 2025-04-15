@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BiSolidBookAdd } from "react-icons/bi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import notify from "./notify";
@@ -197,6 +197,13 @@ const AddDonationFormKinds: React.FC = () => {
     setItems(updatedItems);
   };
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
   return (
     <>
       <div className="bg-white p-10 py-16   rounded-lg  w-full">
@@ -212,20 +219,25 @@ const AddDonationFormKinds: React.FC = () => {
 
               {/* first column */}
               <div className="space-y-6">
-                <div>
-                  <label>Donor Name</label>
-                  <Field
-                    type="text"
-                    name="donorName"
-                    id="donorName"
-                    className="w-full"
-                  />
-                  <ErrorMessage
-                    name="donorName"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+                <Field name="donorName">
+                  {({ field }: any) => (
+                    <div>
+                      <label>Donor Name *</label>
+                      <input
+                        {...field}
+                        ref={inputRef}
+                        type="text"
+                        id="donorName"
+                        className="w-full"
+                      />
+                      <ErrorMessage
+                        name="donorName"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                  )}
+                </Field>
 
                 <div>
                   <label>Country:</label>

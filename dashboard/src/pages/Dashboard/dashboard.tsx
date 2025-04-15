@@ -1,12 +1,10 @@
 import Cards from "../../components/cards";
-import Donations from "../Donations/donations";
 import AddDonationForm from "../../components/donationForm";
 import AddDonationFormKinds from "../../components/donationFormKinds";
 import { useState } from "react";
-import DonationsKind from "../Donations/donationsKind";
 function Dashboard() {
   const [isdonationTypeMoney, setisDonationTypeMoney] = useState(true);
-  const [isdonationListTypeMoney, setisDonationListTypeMoney] = useState(true);
+  // const [isdonationListTypeMoney, setisDonationListTypeMoney] = useState(true);
   return (
     <>
       <Cards></Cards>

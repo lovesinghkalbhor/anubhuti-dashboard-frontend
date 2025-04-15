@@ -129,9 +129,13 @@ const SearchSectionKind: React.FC<SearchSectionProps> = ({
   };
 
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for the dropdown
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -165,6 +169,7 @@ const SearchSectionKind: React.FC<SearchSectionProps> = ({
         <div className="search_container-input">
           <div className="lg:w-3/4   w-full flex items-center space-x-5">
             <input
+              ref={inputRef}
               name="searchText"
               type="text"
               placeholder="Search"

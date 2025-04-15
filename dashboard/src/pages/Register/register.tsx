@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useDispatch } from "react-redux";
 import { registerValidationSchema } from "../../validationchema/validation";
@@ -8,7 +8,7 @@ import { RegisterApi } from "../../dataFetching/userApi/user.api";
 import { setUser } from "../../reduxState/Features/storeuser/userSlice";
 const Register: React.FC = () => {
   // Validation Schema using Yup
-
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Initial Form Values
@@ -59,6 +59,12 @@ const Register: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <div className="bg-white h-screen  flex">
       {/* Left Section */}
@@ -90,15 +96,25 @@ const Register: React.FC = () => {
             <Form>
               <div className="grid grid-cols-2 gap-6 gap-x-12">
                 {/* User Name */}
-                <div>
-                  <label htmlFor="name">User Name</label>
-                  <Field type="text" id="name" name="name" className="w-full" />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+                <Field name="name">
+                  {({ field }: any) => (
+                    <div>
+                      <label htmlFor="name">User Name</label>
+                      <input
+                        {...field}
+                        ref={inputRef}
+                        type="text"
+                        id="name"
+                        className="w-full"
+                      />
+                      <ErrorMessage
+                        name="name"
+                        component="div"
+                        className="text-red-500 text-sm"
+                      />
+                    </div>
+                  )}
+                </Field>
 
                 {/* Mobile Number */}
                 <div>

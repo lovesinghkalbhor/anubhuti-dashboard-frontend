@@ -8,7 +8,7 @@ import {
   searchKindDonationsByDateApiExcel,
 } from "../../dataFetching/donationApi/donation.api";
 import { exportToExcel, formatDate } from "../../utils/helperFuntions";
-import { Form, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SearchSectionKind from "../../components/searchKind";
 
 const DonationsKind: React.FC = () => {
