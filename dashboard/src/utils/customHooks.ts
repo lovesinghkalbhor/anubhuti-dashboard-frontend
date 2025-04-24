@@ -21,6 +21,7 @@ const useDonationData = (id: string) => {
     paymentMode: "",
     paymentMethod: "",
     ddNumber: "",
+    date: "",
     items: [],
   });
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,7 @@ const useKindDonationData = (id: string) => {
     paymentMethod: "",
     ddNumber: "",
     items: [],
+    date: "",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

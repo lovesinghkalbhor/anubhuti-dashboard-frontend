@@ -85,7 +85,7 @@ const autoUpdaterfunction = () => {
 
     autoUpdater.on('update-available', (info) => {
         win.webContents.send('update_available', info); // Sends message to renderer
-
+        console.log(info, "here is the info object")
         autoUpdater.downloadUpdate()
 
     });

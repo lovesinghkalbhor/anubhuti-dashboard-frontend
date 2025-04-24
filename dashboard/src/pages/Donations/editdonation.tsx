@@ -104,10 +104,16 @@ const EditDonationForm: React.FC = () => {
       setddNumber(ddNumber);
     }
     if (donationData.paymentMethod.startsWith("CHEQUE")) {
-      let chequeNumber = donationData.paymentMethod.replace("CHEQUE-", "");
+      // let chequeNumber = donationData.paymentMethod.replace("CHEQUE-", "");
+      let [_, chequeNumber, bankName] = donationData.paymentMethod.split("-");
+
+      console.log();
+      setBank(bankName);
+
       setchequeNumber(chequeNumber);
     }
   }, [donationData]);
+
   const initialValues = {
     donorName: donationData?.donorName || "",
     phoneNumber: donationData?.phoneNumber || "",
@@ -124,6 +130,7 @@ const EditDonationForm: React.FC = () => {
     ddNumber: ddNumber || "",
     bank: bank,
     chequeNumber: chequeNumber,
+    donationDate: donationData?.date.split("T")[0],
     // items: donationData?.items || [],
   };
 
@@ -156,7 +163,7 @@ const EditDonationForm: React.FC = () => {
       }
     } else if (values.paymentMode === "CHEQUE") {
       if (values.chequeNumber) {
-        finalPaymentMethod = `CHEQUE-${values.chequeNumber}`;
+        finalPaymentMethod = `CHEQUE-${values.chequeNumber}-${values.bank}`;
       } else {
         setFieldError("chequeNumber", "Cheque Number is required.");
         return;
@@ -169,7 +176,13 @@ const EditDonationForm: React.FC = () => {
         return;
       }
     }
+    let customdonationCategory;
 
+    if (values.donationCategoryOther) {
+      customdonationCategory = `OTHER-${values.donationCategoryOther}`;
+    } else {
+      customdonationCategory = values.donationCategory;
+    }
     const AddedData = {
       donationId: id,
       donorName: values.donorName,
@@ -180,8 +193,10 @@ const EditDonationForm: React.FC = () => {
       address: values.address,
       amount: values.amount,
       purpose: values.purpose,
-      donationCategory: values.donationCategory,
+      donationCategory: customdonationCategory,
       paymentMethod: finalPaymentMethod,
+      donationDate: new Date(values.donationDate),
+
       // items: items,
     };
 
@@ -356,7 +371,7 @@ const EditDonationForm: React.FC = () => {
                 {/* Conditional Bank Field */}
                 <Field name="paymentMode">
                   {({ field }: any) =>
-                    field.value == "UPI" ? (
+                    field.value === "UPI" || field.value === "CHEQUE" ? (
                       <div className="flex flex-col space-y-1">
                         <label>Select bank</label>
                         <Field as="select" name="bank" id="countrySelect">
@@ -470,6 +485,24 @@ const EditDonationForm: React.FC = () => {
                     className="text-red-500 text-sm"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* third column */}
+            <div className="space-y-6">
+              <div>
+                <label>Donation Date *</label>
+                <Field
+                  type="date"
+                  name="donationDate"
+                  id="donationDate"
+                  className="w-full"
+                />
+                <ErrorMessage
+                  name="donationDate"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
             </div>
           </div>

@@ -106,6 +106,7 @@ const EditDonationFormKinds: React.FC = () => {
     donationCategory: donationCategory || "",
     donationCategoryOther: otherDonation || "",
     items: donationData?.items || [],
+    donationDate: donationData?.date.split("T")[0],
   };
 
   // Add a new item to the list
@@ -168,7 +169,15 @@ const EditDonationFormKinds: React.FC = () => {
     if (filteredItems(items)) {
       return;
     }
-    const ItemAdded = {
+
+    let customdonationCategory;
+
+    if (values.donationCategoryOther) {
+      customdonationCategory = `OTHER-${values.donationCategoryOther}`;
+    } else {
+      customdonationCategory = values.donationCategory;
+    }
+    const AddedData = {
       donationId: values.id,
       donorName: values.donorName,
       phoneNumber: values.phoneNumber,
@@ -177,15 +186,16 @@ const EditDonationFormKinds: React.FC = () => {
       address: values.address,
       countryCode: values.countryCodes,
       purpose: values.purpose,
-      donationCategory: values.donationCategory,
+      donationCategory: customdonationCategory,
       items: items,
+      donationDate: new Date(values.donationDate),
     };
 
     try {
       const CustomApiResponse = await notify(
         "",
         false,
-        editKindDonationApi(ItemAdded)
+        editKindDonationApi(AddedData)
       );
       const apiData = CustomApiResponse?.apiResponse;
 
@@ -382,7 +392,21 @@ const EditDonationFormKinds: React.FC = () => {
 
               {/* third column */}
               {/* Add Items Section */}
-              <div className="max-h-80 -mt-8 w-56">
+              <div className="max-h-80 space-y-10  w-56">
+                <div>
+                  <label>Donation Date *</label>
+                  <Field
+                    type="date"
+                    name="donationDate"
+                    id="donationDate"
+                    className="w-full"
+                  />
+                  <ErrorMessage
+                    name="donationDate"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
                 <div className="flex justify-between items-center mb-4">
                   <label className="font-bold">Add Items</label>
                   <button

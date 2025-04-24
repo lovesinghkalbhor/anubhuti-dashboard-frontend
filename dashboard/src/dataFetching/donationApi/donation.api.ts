@@ -168,8 +168,6 @@ const searchDonationByDetailsApi = async (
   limit: number
 ) => {
   try {
-    alert(details);
-
     console.log(details, "searchText, startDate, endDate");
     const response = await api.get(`/donations/search`, {
       params: { search: details, page, limit },
@@ -195,8 +193,6 @@ const searchKindDonationByDetailsApi = async (
   limit: number
 ) => {
   try {
-    alert(details);
-
     console.log(details, "searchText, startDate, endDate");
     const response = await api.get(`/donations/searchKinds`, {
       params: { search: details, page, limit },

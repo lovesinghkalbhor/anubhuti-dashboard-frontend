@@ -19,7 +19,7 @@ const notify = (
         },
         error: {
           render({ data }: any) {
-            return data?.apiResponse?.data.message || "something went wrong";
+            return data?.apiResponse?.data.message || "Something went wrong";
           },
         },
       });

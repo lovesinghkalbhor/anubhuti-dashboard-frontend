@@ -84,6 +84,7 @@ const AddDonationFormKinds: React.FC = () => {
     donationCategory: "",
     items: [],
     donationCategoryOther: "",
+    donationDate: new Date().toISOString().split("T")[0],
   };
 
   const [items, setItems] = useState<ItemInterface[]>([]); // State to manage added items
@@ -165,6 +166,7 @@ const AddDonationFormKinds: React.FC = () => {
       purpose: values.purpose,
       donationCategory: customdonationCategory,
       items: items,
+      donationDate: values.donationDate,
     };
 
     try {
@@ -304,7 +306,13 @@ const AddDonationFormKinds: React.FC = () => {
               <div className="space-y-6">
                 <div>
                   <label>Pan Card</label>
-                  <Field type="text" name="pan" id="pan" className="w-full" />
+                  <Field
+                    type="text"
+                    name="pan"
+                    id="pan"
+                    className="w-full"
+                    placeholder="Optional"
+                  />
                   <ErrorMessage
                     name="pan"
                     component="div"
@@ -378,7 +386,23 @@ const AddDonationFormKinds: React.FC = () => {
 
               {/* third column */}
               {/* Add Items Section */}
-              <div className="max-h-80 -mt-8 w-56">
+              <div className="max-h-80 space-y-10 w-56">
+                {/* third column */}
+                <div>
+                  <label>Donation Date *</label>
+                  <Field
+                    type="date"
+                    name="donationDate"
+                    id="donationDate"
+                    className="w-full"
+                  />
+                  <ErrorMessage
+                    name="donationDate"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
                 <div className="flex justify-between items-center mb-4">
                   <label className="font-bold">Add Items</label>
                   <button

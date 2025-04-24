@@ -43,10 +43,8 @@ function App() {
       location.pathname == "/"
     ) {
       setisloginRegister(false);
-      console.log(isloginRegister);
     } else {
       setisloginRegister(true);
-      console.log(isloginRegister);
     }
   }, [location.pathname]);
 

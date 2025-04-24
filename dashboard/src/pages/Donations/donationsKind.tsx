@@ -112,7 +112,6 @@ const DonationsKind: React.FC = () => {
             Items: donation._count.items,
           })
         );
-        console.log(formattedDonations, "api formated data");
 
         exportToExcel(formattedDonations, "Donation data");
 
@@ -175,7 +174,7 @@ const DonationsKind: React.FC = () => {
                 filteredData.map((donation) => (
                   <tr key={donation.receiptNo}>
                     <td>{donation.receiptNo}</td>
-                    <td>{formatDate(donation.date)}</td>
+                    <td className="text-nowrap">{formatDate(donation.date)}</td>
                     <td>{donation.authorizedPersonName}</td>
                     <td>{donation.donorName}</td>
                     <td>{donation.phoneNumber}</td>

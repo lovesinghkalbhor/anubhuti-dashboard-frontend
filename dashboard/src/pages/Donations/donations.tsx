@@ -135,9 +135,9 @@ const Donations: React.FC = () => {
         filteredData={filteredData}
         setFilteredData={setFilteredData}
         pagination={pagination}
+        setPagination={setPagination}
         setEndDateExcel={setEndDateExcel}
         setStartDateExcel={setStartDateExcel}
-        setPagination={setPagination}
         refresh={fetchDefaultList}
       ></SearchSection>
 
@@ -168,7 +168,7 @@ const Donations: React.FC = () => {
                   <tr key={donation.id}>
                     {/* <td>{donation.id}</td> */}
                     <td>{donation.receiptNo}</td>
-                    <td>{formatDate(donation.date)}</td>
+                    <td className="text-nowrap">{formatDate(donation.date)}</td>
                     <td>{donation.authorizedPersonName}</td>
                     <td>{donation.donorName}</td>
                     <td>{donation.phoneNumber}</td>

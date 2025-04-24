@@ -88,6 +88,7 @@ const AddDonationForm: React.FC = () => {
     chequeNumber: "",
     bank: "",
     donationCategoryOther: "",
+    donationDate: new Date().toISOString().split("T")[0],
   };
 
   const handleSubmit = async (
@@ -116,7 +117,7 @@ const AddDonationForm: React.FC = () => {
       }
     } else if (values.paymentMode === "CHEQUE") {
       if (values.chequeNumber) {
-        finalPaymentMethod = `CHEQUE-${values.chequeNumber}`;
+        finalPaymentMethod = `CHEQUE-${values.chequeNumber}-${values.bank}`;
       } else {
         setFieldError("chequeNumber", "Cheque Number is required.");
         return;
@@ -149,6 +150,7 @@ const AddDonationForm: React.FC = () => {
       purpose: values.purpose,
       donationCategory: customdonationCategory,
       paymentMethod: finalPaymentMethod,
+      donationDate: values.donationDate,
     };
 
     try {
@@ -333,7 +335,7 @@ const AddDonationForm: React.FC = () => {
                 {/* Conditional Bank Field */}
                 <Field name="paymentMode">
                   {({ field }: any) =>
-                    field.value == "UPI" ? (
+                    field.value === "UPI" || field.value === "CHEQUE" ? (
                       <div className="flex flex-col space-y-1">
                         <label>Select bank</label>
                         <Field as="select" name="bank" id="countrySelect">
@@ -453,6 +455,24 @@ const AddDonationForm: React.FC = () => {
                     className="text-red-500 text-sm"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* third column */}
+            <div className="space-y-6">
+              <div>
+                <label>Donation Date *</label>
+                <Field
+                  type="date"
+                  name="donationDate"
+                  id="donationDate"
+                  className="w-full"
+                />
+                <ErrorMessage
+                  name="donationDate"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
               </div>
             </div>
           </div>

@@ -8,7 +8,7 @@ import {
   searchDonationByDetailsApi,
   searchDonationsByDateApi,
 } from "../dataFetching/donationApi/donation.api";
-import FilterModalKind from "./FilterModelKind";
+import FilterModal from "./FilterModel";
 
 interface SearchSectionProps {
   refresh: (message: string | undefined) => Promise<void>;
@@ -29,9 +29,9 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   filteredData,
   setFilteredData,
   pagination,
+  setPagination,
   setStartDateExcel,
   setEndDateExcel,
-  setPagination,
 }) => {
   const [searchText, setSearchText] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -318,7 +318,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         </div>
       </div>
       {/* Filter Modal */}
-      <FilterModalKind
+      <FilterModal
         setRecentFilters={setRecentFilters}
         recentFilters={recentFilters}
         isOpen={isFilterModalOpen}

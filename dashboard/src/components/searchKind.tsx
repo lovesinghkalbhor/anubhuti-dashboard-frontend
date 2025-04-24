@@ -4,11 +4,11 @@ import { MdOutlineCancel } from "react-icons/md";
 import { validateSearchText, validateDate } from "../utils/helperFuntions";
 import notify from "./notify";
 import { FaFilter } from "react-icons/fa6";
-import FilterModal from "./FilterModel";
 import {
   searchKindDonationsByDateApi,
   searchKindDonationByDetailsApi,
 } from "../dataFetching/donationApi/donation.api";
+import FilterModalKind from "./FilterModelKind";
 
 interface SearchSectionProps {
   refresh: (message: string | undefined) => Promise<void>;
@@ -318,7 +318,7 @@ const SearchSectionKind: React.FC<SearchSectionProps> = ({
         </div>
       </div>
       {/* Filter Modal */}
-      <FilterModal
+      <FilterModalKind
         setRecentFilters={setRecentFilters}
         recentFilters={recentFilters}
         isOpen={isFilterModalOpen}
